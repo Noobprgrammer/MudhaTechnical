@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-
 import './Table.css'
+import './index.css'
 
-
-function Table1({ onProcessTable2Data }) {
+function Table1({ onTable1DataLoaded, onRawDataLoaded }) {
   const [table1Data, setTable1Data] = useState([]);
+  const [rawData, setRawData] = useState([]);
 
   useEffect(() => {
     fetch('./Table_Input.csv')
@@ -22,39 +22,20 @@ function Table1({ onProcessTable2Data }) {
             });
             return obj;
           });
+          setRawData(objects); // Store the raw data
           setTable1Data(objects);
-          Table2Data(objects);
+          if (onTable1DataLoaded) {
+            onTable1DataLoaded(objects);
+          }
+          if (onRawDataLoaded) { // Pass rawData to App.jsx
+            onRawDataLoaded(objects);
+          }
         }
       })
-  }, [onProcessTable2Data]);
-
-  const Table2Data = (data) => {
-    const valuesMap = {};
-    data.forEach(item => {
-      if (item['Index #'] && item.Value) {
-        valuesMap[item['Index #'].trim()] =  parseInt(item.Value.trim(), 10);
-      }
-    });
-
-    const newTableData = [
-      {
-        Category: 'Alpha',
-        Value: (valuesMap['A5'] || 0) + (valuesMap['A20']),
-      },
-      {
-        Category: 'Beta',
-        Value: (valuesMap['A15'] || 0) / (valuesMap['A7']),
-      },
-      {
-        Category: 'Charlie',
-        Value: (valuesMap['A13'] || 0) * (valuesMap['A12']),
-      },
-    ];
-    if (onProcessTable2Data) {
-      onProcessTable2Data(newTableData);
-    }
-  };
-
+      .catch(error => {
+        console.error('Error loading CSV file:', error);
+      });
+  }, [onTable1DataLoaded, onRawDataLoaded]);
   return (
     <div className='body'>
       <h1>TABLE 1 Data</h1>
@@ -78,6 +59,7 @@ function Table1({ onProcessTable2Data }) {
           </tbody>
         </table>
       )}
+      {table1Data.length === 0 && <p>Loading Table 1 data...</p>}
       <hr />
     </div>
   );

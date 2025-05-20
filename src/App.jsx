@@ -3,14 +3,16 @@ import React, { useState } from 'react';
 import Table1 from './Table1.jsx';
 import Table2 from './Table2.jsx';
 import './App.css'
+import './index.css'
 
 
 function App() {
   const [table2Data, setTable2Data] = useState([]);
   const [showTable2, setShowTable2] = useState(false);
+  const [rawData, setRawData] = useState([]);
 
-  const handleProcessTable2Data = (data) => {
-    setTable2Data(data);
+  const handleRawDataLoaded = (data) => {
+    setRawData(data);
   };
 
   const handleDisplayTable2 = () => {
@@ -19,9 +21,9 @@ function App() {
 
   return (
     <div className='body'>
-      <Table1 onProcessTable2Data={handleProcessTable2Data} />
+      <Table1 onRawDataLoaded={handleRawDataLoaded} />
       <button onClick={handleDisplayTable2}>Display Table 2</button>
-      <Table2 table2Data={table2Data} visible={showTable2} />
+      <Table2 rawData={rawData} visible={showTable2} />
     </div>
   );
 }
